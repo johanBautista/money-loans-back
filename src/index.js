@@ -1,24 +1,29 @@
-const express = require("express");
-const mongoose = require("mongoose");
-require("dotenv").config();
-const offertRoute = require("./routes/offerts");
+import "dotenv/config";
+import "./database/connectdb.js";
+import offertRouter from "./routes/offert.router.js";
+import express from "express";
+import cors from "cors";
 
-//setting
 const app = express();
-const port = process.env.PORT || 8080;
+
+//cors
+const whitelist = [process.env.ORIGIN1, process.env.ORIGIN2];
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (whitelist.indexOf(origin) !== -1 || !origin) {
+        return callback(null, true);
+      }
+      return callback(`🆘 Error de Cors ${origin}, no autorizado`);
+    },
+  })
+);
 
 //
 app.use(express.json());
-app.use("/api/v1", offertRoute);
+//
+app.use("/api/v1/offerts", offertRouter);
 
-//routes
-app.get("/", (req, res) => {
-  res.send("Juan");
-});
+const PORT = process.env.PORT || 8080;
 
-//mongoDB connection
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => console.log("DB connected"))
-  .catch((err) => console.log(err));
-app.listen(port, () => console.log("listening on", port));
+app.listen(PORT, () => console.log("listening on", PORT));
