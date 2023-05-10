@@ -53,3 +53,13 @@ export const updateOffert = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+
+export const allfavorites = async (req, res) => {
+  try {
+    const offerts = await Offert.find({ favorite: true });
+    return res.send({ offerts });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+};
